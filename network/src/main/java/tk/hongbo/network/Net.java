@@ -12,6 +12,7 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import tk.hongbo.network.process.UsualInterceptor;
 
 public class Net {
 
@@ -34,6 +35,7 @@ public class Net {
                         .readTimeout(10, TimeUnit.SECONDS)
                         .cache(new Cache(AppInfo.application.getExternalCacheDir().getAbsoluteFile(), cacheSize))
                         .addInterceptor(interceptor)
+                        .addInterceptor(new UsualInterceptor())
                         .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build();
             }
@@ -81,11 +83,12 @@ public class Net {
 
     static Interceptor interceptor = chain -> {
         Request original = chain.request();
+        //通用Header
         Request.Builder requestBuild = original.newBuilder();
         requestBuild.addHeader("Accept-Encoding", "identity");
         requestBuild.addHeader("os", "android");
         requestBuild.addHeader("ts", String.valueOf(System.currentTimeMillis()));
-        if (AppInfo.process != null && AppInfo.process.getHeaders() != null) {
+        if (AppInfo.process != null && AppInfo.process.getHeaders() != null && !AppInfo.process.getHeaders().isEmpty()) {
             for (String key : AppInfo.process.getHeaders().keySet()) {
                 String value = AppInfo.process.getHeaders().get(key);
                 if (!TextUtils.isEmpty(value)) {

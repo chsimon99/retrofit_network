@@ -8,5 +8,7 @@ public interface INetProcess {
 
     Map<String, String> getHeaders();
 
+    Map<String, String> getParams();
+
     void onErrorProcess(NetData netData); //网络请求错误处理
 }

@@ -3,6 +3,9 @@ package tk.hongbo.network.net;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+
+import tk.hongbo.network.data.BaseEntiry;
 
 /**
  * Created by HONGBO on 2018/4/30 17:46.
@@ -18,7 +21,22 @@ public abstract class NetDataObserver<M> implements Observer<NetData<M>> {
     @Override
     public void onChanged(@Nullable NetData<M> root) {
         if (root.getNetStatus() == NetData.NET_STATUS_SUCCESS) {
-            onSuccess(root.getData());
+            if (root.getData() instanceof BaseEntiry) {
+                if (((BaseEntiry) root.getData()).getStatus() == 200) {
+                    onSuccess(root.getData());
+                } else {
+                    if (owner != null) {
+                        Snackbar.make(owner.getCurrentFocus(), ((BaseEntiry) root.getData())
+                                .getMessage(), Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                try {
+                    throw new IllegalAccessException("The Entity must extends BaseEntity!");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
             onFailure(root);
         }

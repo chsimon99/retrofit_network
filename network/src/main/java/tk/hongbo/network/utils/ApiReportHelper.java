@@ -131,7 +131,6 @@ public class ApiReportHelper {
         }
         IRequestSend service = Net.getIns().getRetrofit().create(IRequestSend.class);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr);
-        service.sendReporrt(requestBody).enqueue(new NetCallback<>(netData -> {
-        }));
+        service.sendReporrt(requestBody).enqueue(new NetCallback<>(null));
     }
 }

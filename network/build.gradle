@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     api 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

@@ -1,6 +1,8 @@
 package tk.hongbo.hbc_network.entity;
 
-public class LastOfferLimitEntity {
+import tk.hongbo.network.data.BaseEntiry;
+
+public class LastOfferLimitEntity extends BaseEntiry {
 
     private LastOfferLimitVo data;
 

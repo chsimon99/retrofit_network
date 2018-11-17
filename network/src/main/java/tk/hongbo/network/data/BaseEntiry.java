@@ -1,6 +1,8 @@
 package tk.hongbo.network.data;
 
-public class BaseEntiry {
+import java.io.Serializable;
+
+public class BaseEntiry implements Serializable {
 
     private int status;
     private String message;

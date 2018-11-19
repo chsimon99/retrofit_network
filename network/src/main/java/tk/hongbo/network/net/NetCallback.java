@@ -1,12 +1,15 @@
 package tk.hongbo.network.net;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import tk.hongbo.network.data.BaseEntiry;
+import tk.hongbo.network.data.NetRoot;
 import tk.hongbo.network.utils.ApiReportHelper;
 
-public class NetCallback<T> implements Callback<T> {
+public class NetCallback<ROOT, B> implements Callback<ROOT> {
 
     private NetDataListener listener;
 
@@ -15,49 +18,58 @@ public class NetCallback<T> implements Callback<T> {
     }
 
     @Override
-    public void onResponse(Call<T> call, Response<T> response) {
+    public void onResponse(Call<ROOT> call, Response<ROOT> response) {
         ApiReportHelper.getInstance().addReport(response);
         if (response.isSuccessful()) {
-            if (response.body() instanceof BaseEntiry) {
-                if (((BaseEntiry) response.body()).getStatus() == 200) {
-                    if (listener != null) {
-                        listener.onSuccess(response.body(), call, response);
-                    }
-                } else {
-                    if (listener != null) {
-                        listener.onBusinessError(response.body(), call, response);
-                    }
-                }
-            } else {
+            if ((response.body() instanceof ResponseBody)) {
                 try {
-                    throw new IllegalAccessException("The Entity must extends BaseEntity!");
+                    listener.onSuccess(((ResponseBody) response.body()).string());
+                } catch (IOException e) {
+                    listener.onSuccess("");
+                }
+                return;
+            }
+            if (!(response.body() instanceof NetRoot)) {
+                try {
+                    throw new IllegalAccessException("Call must be a NetRoot type!");
                 } catch (IllegalAccessException e) {
                     if (listener != null) {
-                        listener.onFailure(call, e);
+                        listener.onFailure(e);
                     }
+                }
+                return;
+            }
+            NetRoot<B> netRoot = (NetRoot) response.body();
+            if (netRoot.getStatus() == 200) {
+                if (listener != null) {
+                    listener.onSuccess(netRoot.getData());
+                }
+            } else {
+                if (listener != null) {
+                    listener.onBusinessError(netRoot.getStatus(), netRoot.getMessage());
                 }
             }
         } else {
             if (listener != null) {
-                listener.onServiceError(response.code(), call, response);
+                listener.onServiceError(response.code());
             }
         }
     }
 
     @Override
-    public void onFailure(Call<T> call, Throwable t) {
+    public void onFailure(Call<ROOT> call, Throwable t) {
         if (listener != null) {
-            listener.onFailure(call, t);
+            listener.onFailure(t);
         }
     }
 
-    public interface NetDataListener<T> {
-        void onSuccess(T t, Call<T> call, Response<T> response);
+    public interface NetDataListener<B> {
+        void onSuccess(B t);
 
-        void onBusinessError(T t, Call<T> call, Response<T> response);
+        void onBusinessError(int status, String message);
 
-        void onServiceError(int code, Call<T> call, Response<T> response);
+        void onServiceError(int status);
 
-        void onFailure(Call<T> call, Throwable t);
+        void onFailure(Throwable t);
     }
 }

@@ -4,7 +4,5 @@ public interface NetRequestListener<M> {
 
     void onSuccess(M m);
 
-    void onFailure(M m, String error);
-
-    void onError(int code, Throwable t);
+    void onFailure(int status, String message, Throwable t);
 }

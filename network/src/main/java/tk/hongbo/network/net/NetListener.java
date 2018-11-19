@@ -1,5 +1,7 @@
 package tk.hongbo.network.net;
 
+import android.text.TextUtils;
+
 import org.apache.http.conn.ConnectTimeoutException;
 
 import java.net.MalformedURLException;
@@ -13,14 +15,16 @@ import tk.hongbo.network.Net;
 import tk.hongbo.network.utils.ToastUtils;
 
 public abstract class NetListener<M> implements NetRequestListener<M> {
-
     @Override
-    public void onFailure(M m, String error) {
-        ToastUtils.makeToast(Net.getIns().getApplication(), error).show();
+    public void onFailure(int status, String message, Throwable t) {
+        if (TextUtils.isEmpty(message)) {
+            onError(status, t);
+        } else {
+            ToastUtils.makeToast(Net.getIns().getApplication(), message).show();
+        }
     }
 
-    @Override
-    public void onError(int code, Throwable t) {
+    private void onError(int code, Throwable t) {
         String msg;
         if (code > 0) {
             msg = "服务器忙翻了(" + code + ")";
@@ -30,12 +34,12 @@ public abstract class NetListener<M> implements NetRequestListener<M> {
         ToastUtils.makeToast(Net.getIns().getApplication(), msg).show();
     }
 
-    public static String handleException(Throwable error) {
+    private String handleException(Throwable error) {
         String msg = "访问API错误";
         if (error instanceof SocketTimeoutException) {
-            msg = "网络异常";
+            msg = "网络超时";
         } else if (error instanceof ConnectTimeoutException) {
-            msg = "访问超时";
+            msg = "连接超时";
         } else if (error instanceof MalformedURLException) {
             msg = "访问地址异常";
         } else if (error instanceof SocketException) {

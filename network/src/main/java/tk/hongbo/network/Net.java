@@ -12,6 +12,7 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import tk.hongbo.network.other.LiveDataCallAdapterFactory;
 import tk.hongbo.network.process.UsualInterceptor;
 
 public class Net {
@@ -42,6 +43,7 @@ public class Net {
             AppInfo.retrofit = new Retrofit.Builder()
                     .baseUrl(AppInfo.baseUrl)
                     .client(AppInfo.okHttpClient)
+                    .addCallAdapterFactory(LiveDataCallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

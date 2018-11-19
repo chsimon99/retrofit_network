@@ -23,7 +23,7 @@ public class MyApplication extends Application {
                 map.put("ak", "bb50c67b3f7d9143b77272da961de3f9");
                 map.put("deviceId", "352936090691741");
                 map.put("appChannel", "10006");
-                map.put("ut", "ad21a746c9c50ff4dac6528ec03c1f47");
+                map.put("ut", "34f33ad40660aa3ceedf901daff9a432");
                 return map;
             }
 

@@ -1,12 +1,10 @@
 package tk.hongbo.network;
 
 import retrofit2.Call;
-import retrofit2.Response;
-import tk.hongbo.network.data.BaseEntiry;
 import tk.hongbo.network.net.NetCallback;
 import tk.hongbo.network.net.NetListener;
 
-public class NetHelper<R> {
+public class NetHelper<R, M> {
 
     private static volatile NetHelper netRequest;
 
@@ -21,33 +19,34 @@ public class NetHelper<R> {
         return netRequest;
     }
 
-    public void request(Call<R> call, NetListener<R> listener) {
-        call.enqueue(new NetCallback<>(new NetCallback.NetDataListener<R>() {
+    public void request(Call<R> call, NetListener<M> listener) {
+        call.enqueue(new NetCallback<R, M>(new NetCallback.NetDataListener<M>() {
+
             @Override
-            public void onSuccess(R r, Call<R> call, Response<R> response) {
+            public void onSuccess(M t) {
                 if (listener != null) {
-                    listener.onSuccess(r);
+                    listener.onSuccess(t);
                 }
             }
 
             @Override
-            public void onBusinessError(R r, Call<R> call, Response<R> response) {
+            public void onBusinessError(int status, String message) {
                 if (listener != null) {
-                    listener.onFailure(r, ((BaseEntiry) r).getMessage());
+                    listener.onFailure(status, message, null);
                 }
             }
 
             @Override
-            public void onServiceError(int code, Call call, Response response) {
+            public void onServiceError(int status) {
                 if (listener != null) {
-                    listener.onError(code, null);
+                    listener.onFailure(status, "", new IllegalStateException("Server Exception"));
                 }
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
+            public void onFailure(Throwable t) {
                 if (listener != null) {
-                    listener.onError(0, t);
+                    listener.onFailure(0, "", t);
                 }
             }
         }));

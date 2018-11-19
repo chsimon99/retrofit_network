@@ -12,7 +12,7 @@ afterEvaluate { project ->
                     authentication(userName: properties.getProperty('maven.user'), password: properties.getProperty('maven.password'))
                 }
                 pom.project {
-                    version '0.0.5'
+                    version '0.0.7'
                     artifactId 'network'
                     groupId 'tk.hongbo.net'
                     packaging 'aar'

@@ -17,6 +17,8 @@ import tk.hongbo.network.process.UsualInterceptor;
 
 public class Net {
 
+    public static final String TAG = "NetWork"; //Tag
+
     private static final int cacheSize = 10 * 1024 * 1024;
 
     private static volatile Net net;
@@ -61,6 +63,14 @@ public class Net {
         return AppInfo.process;
     }
 
+    public void setDebug(boolean isDebug) {
+        AppInfo.isDebug = isDebug;
+    }
+
+    public boolean isDebug() {
+        return AppInfo.isDebug;
+    }
+
     public static Net getIns() {
         if (AppInfo.application == null) {
             throw new NullPointerException("Application cannot be empty, it must be initialized in the application of the APP first");
@@ -77,6 +87,7 @@ public class Net {
 
     private static class AppInfo {
         private static Application application;
+        private static volatile boolean isDebug = true;
         public static volatile Retrofit retrofit;
         private static volatile OkHttpClient okHttpClient;
         private static String baseUrl = "https://api5.huangbaoche.com/";

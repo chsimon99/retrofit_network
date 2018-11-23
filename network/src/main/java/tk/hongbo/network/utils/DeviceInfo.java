@@ -73,4 +73,21 @@ public class DeviceInfo {
         return NetworkEnum.TYPE_NONE;
     }
 
+    public static boolean isNetworkAvailable() {
+        try {
+            ConnectivityManager connectivity = (ConnectivityManager) Net.getIns().getApplication()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity != null) {
+                NetworkInfo info = connectivity.getActiveNetworkInfo();
+                if (info != null && info.isConnected()) {
+                    if (info.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
 }

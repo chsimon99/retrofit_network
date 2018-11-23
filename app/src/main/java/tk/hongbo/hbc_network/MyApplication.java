@@ -33,7 +33,7 @@ public class MyApplication extends Application {
                 map.put("channelId", "18");
                 return map;
             }
-
         });
+        Net.getIns().setDebug(false);
     }
 }

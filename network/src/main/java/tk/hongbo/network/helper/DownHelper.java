@@ -10,7 +10,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import tk.hongbo.network.utils.LogHelper;
+import tk.hongbo.network.utils.Log;
 
 public class DownHelper {
 
@@ -43,7 +43,7 @@ public class DownHelper {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
-                LogHelper.e("下载失败", e);
+                Log.e("下载失败", e);
                 listener.onDownloadFailed();
             }
 
@@ -54,7 +54,7 @@ public class DownHelper {
                 int len = 0;
                 FileOutputStream fos = null;
                 if (!isExistDir(localUrl)) {
-                    LogHelper.e("下载目录不存在", null);
+                    Log.e("下载目录不存在", null);
                     listener.onDownloadFailed();
                     return;
                 }
@@ -73,10 +73,10 @@ public class DownHelper {
                     }
                     fos.flush();
                     // 下载完成
-                    LogHelper.d("下载成功");
+                    Log.d("下载成功");
                     listener.onDownloadSuccess();
                 } catch (Exception e) {
-                    LogHelper.e("下载写入文件异常", e);
+                    Log.e("下载写入文件异常", e);
                     listener.onDownloadFailed();
                 } finally {
                     try {

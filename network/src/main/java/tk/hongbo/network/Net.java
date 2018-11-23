@@ -14,11 +14,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tk.hongbo.network.other.LiveDataCallAdapterFactory;
 import tk.hongbo.network.process.UsualInterceptor;
-import tk.hongbo.network.utils.LogHelper;
+import tk.hongbo.network.utils.Log;
 
 public class Net {
-
-    public static final String TAG = "NetWork"; //Tag
 
     private static final int cacheSize = 10 * 1024 * 1024;
 
@@ -72,6 +70,7 @@ public class Net {
 
     public void setDebug(boolean isDebug) {
         AppInfo.isDebug = isDebug;
+        Log.setIsDebug(isDebug);
     }
 
     public boolean isDebug() {
@@ -121,6 +120,6 @@ public class Net {
     };
 
     HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(message -> {
-        LogHelper.d(message);
+        Log.d(message);
     });
 }

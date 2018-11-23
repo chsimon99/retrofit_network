@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.File;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import tk.hongbo.hbc_network.entity.LastOfferLimitVo;
 import tk.hongbo.hbc_network.request.IRequestAccess;
@@ -34,7 +35,8 @@ public class MainViewModel extends AndroidViewModel {
         liveData = new MutableLiveData<>();
 //        getNetData();
 //        test1();
-        test2();
+//        test2();
+        test3();
         return liveData;
     }
 
@@ -66,6 +68,16 @@ public class MainViewModel extends AndroidViewModel {
             public void onFailure(int status, String message, Throwable t) {
                 super.onFailure(status, message, t);
                 Log.d("test", "错误信息：" + message + ",错误状态码：" + status);
+            }
+        });
+    }
+
+    private void test3() {
+        Call<ResponseBody> call = service.getOrderListAll1(0, 20, 0);
+        NetHelper.getIns().request(call, new NetListener() {
+            @Override
+            public void onSuccess(Object o) {
+                Log.d("test", String.valueOf(o));
             }
         });
     }

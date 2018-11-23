@@ -8,7 +8,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tk.hongbo.network.data.NetRoot;
 import tk.hongbo.network.utils.ApiReportHelper;
-import tk.hongbo.network.utils.LogHelper;
+import tk.hongbo.network.utils.Log;
 
 public class NetCallback<R, B> implements Callback<R> {
 
@@ -33,7 +33,7 @@ public class NetCallback<R, B> implements Callback<R> {
                         if (listener != null) {
                             listener.onSuccess("");
                         }
-                        LogHelper.e("Get result info failure", e);
+                        Log.e("Get result info failure", e);
                     }
                     return;
                 }
@@ -41,7 +41,7 @@ public class NetCallback<R, B> implements Callback<R> {
                     try {
                         throw new IllegalAccessException("Call must be a NetRoot type!");
                     } catch (IllegalAccessException e) {
-                        LogHelper.e("Does not support non-NetRoot format", e);
+                        Log.e("Does not support non-NetRoot format", e);
                         if (listener != null) {
                             listener.onFailure(e);
                         }
@@ -64,13 +64,13 @@ public class NetCallback<R, B> implements Callback<R> {
                 }
             }
         } catch (Exception e) {
-            LogHelper.e("Data processing exception", e);
+            Log.e("Data processing exception", e);
         }
     }
 
     @Override
     public void onFailure(Call<R> call, Throwable t) {
-        LogHelper.e("Net error", t);
+        Log.e("Net error", t);
         if (listener != null) {
             listener.onFailure(t);
         }

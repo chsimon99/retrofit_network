@@ -28,4 +28,8 @@ public interface IRequestAccess {
     @FormUrlEncoded
     @POST("ucenter/v1.0/c/user/password/update")
     Call<NetRoot<LastOfferLimitVo>> changePwd(@Field("originPassword") String originPassword, @Field("password") String password);
+
+    @GET("trade/v1.5/c/order/list/all")
+    Call<ResponseBody> getOrderListAll1(@Query("searchType") int searchType, @Query("limit") int limit,
+                                        @Query("offset") int offset);
 }

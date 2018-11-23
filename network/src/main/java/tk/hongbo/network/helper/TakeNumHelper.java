@@ -13,7 +13,7 @@ import tk.hongbo.network.bussiness.IRequestSend;
 import tk.hongbo.network.data.OssTokenBean;
 import tk.hongbo.network.data.OssTokenKeyBean;
 import tk.hongbo.network.net.NetListener;
-import tk.hongbo.network.utils.LogHelper;
+import tk.hongbo.network.utils.Log;
 
 /**
  * 上传文件取号器
@@ -51,7 +51,7 @@ public class TakeNumHelper {
         long haveTime = System.currentTimeMillis() - getTime; //现在剩余的时间
         if (ossTokenBean != null) {
             double sumTime = ossTokenBean.getValidMinutes() * 60 * 1000 * 0.7;
-            LogHelper.d("上传阿里云取号，已过Time:" + haveTime + "，剩余Time:" + sumTime);
+            Log.d("上传阿里云取号，已过Time:" + haveTime + "，剩余Time:" + sumTime);
             return haveTime < sumTime;
         }
         return false;

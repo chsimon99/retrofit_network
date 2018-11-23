@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void test() {
         viewModel.getOfferLimit().observe(this, data -> {
-            Log.d("test", data.getLastOfferLimitTip());
+            Log.d("test", "Finish");
         });
     }
 

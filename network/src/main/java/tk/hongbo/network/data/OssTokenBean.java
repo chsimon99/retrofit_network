@@ -1,9 +1,5 @@
 package tk.hongbo.network.data;
 
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.List;
 

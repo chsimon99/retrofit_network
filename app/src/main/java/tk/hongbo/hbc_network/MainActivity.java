@@ -8,6 +8,9 @@ import android.view.View;
 
 import java.io.File;
 
+import tk.hongbo.network.helper.NetHelper;
+import tk.hongbo.network.net.NetListener;
+
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
@@ -38,5 +41,20 @@ public class MainActivity extends AppCompatActivity {
     public void download(View view) {
         String localPath = getExternalFilesDir("testt") + File.separator + "ttt.png";
         viewModel.download("https://www.baidu.com/img/bd_logo1.png", localPath);
+    }
+
+    /**
+     * 通用方式获取数据
+     *
+     * @param view
+     */
+    public void getData(View view) {
+        String url = "ucenter/v1.0/c/user/information";
+        NetHelper.get().request(url, NetHelper.RequestType.POST, null, new NetListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                Log.d("test", s);
+            }
+        });
     }
 }

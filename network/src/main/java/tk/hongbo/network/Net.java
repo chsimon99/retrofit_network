@@ -14,6 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tk.hongbo.network.other.LiveDataCallAdapterFactory;
 import tk.hongbo.network.process.UsualInterceptor;
+import tk.hongbo.network.utils.LogHelper;
 
 public class Net {
 
@@ -29,6 +30,11 @@ public class Net {
         AppInfo.process = process;
     }
 
+    public static void init(Application application, String baseUrl, INetProcess process, boolean showLogging) {
+        init(application, baseUrl, process);
+        AppInfo.showLogging = showLogging;
+    }
+
     private Net() {
         if (AppInfo.retrofit == null) {
             if (AppInfo.okHttpClient == null) {
@@ -39,7 +45,8 @@ public class Net {
                         .cache(new Cache(AppInfo.application.getExternalCacheDir().getAbsoluteFile(), cacheSize))
                         .addInterceptor(interceptor)
                         .addInterceptor(new UsualInterceptor())
-                        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                        .addInterceptor(httpLoggingInterceptor.setLevel(AppInfo.showLogging ?
+                                HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE))
                         .build();
             }
             AppInfo.retrofit = new Retrofit.Builder()
@@ -92,6 +99,7 @@ public class Net {
         private static volatile OkHttpClient okHttpClient;
         private static String baseUrl = "https://api5.huangbaoche.com/";
         private static INetProcess process;
+        private static volatile boolean showLogging = true;
     }
 
     static Interceptor interceptor = chain -> {
@@ -111,4 +119,8 @@ public class Net {
         }
         return chain.proceed(requestBuild.build());
     };
+
+    HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(message -> {
+        LogHelper.d(message);
+    });
 }

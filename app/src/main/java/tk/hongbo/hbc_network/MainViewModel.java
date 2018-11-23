@@ -7,12 +7,16 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.File;
+
 import retrofit2.Call;
 import tk.hongbo.hbc_network.entity.LastOfferLimitVo;
 import tk.hongbo.hbc_network.request.IRequestAccess;
 import tk.hongbo.network.Net;
 import tk.hongbo.network.NetHelper;
 import tk.hongbo.network.data.NetRoot;
+import tk.hongbo.network.helper.DownHelper;
+import tk.hongbo.network.helper.UploadHelper;
 import tk.hongbo.network.net.NetListener;
 
 public class MainViewModel extends AndroidViewModel {
@@ -28,9 +32,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public MutableLiveData<LastOfferLimitVo> getOfferLimit() {
         liveData = new MutableLiveData<>();
-        getNetData();
+//        getNetData();
 //        test1();
-//        test2();
+        test2();
         return liveData;
     }
 
@@ -62,6 +66,39 @@ public class MainViewModel extends AndroidViewModel {
             public void onFailure(int status, String message, Throwable t) {
                 super.onFailure(status, message, t);
                 Log.d("test", "错误信息：" + message + ",错误状态码：" + status);
+            }
+        });
+    }
+
+    public void upload(String filePath) {
+        UploadHelper.get().upload(new File(filePath), new UploadHelper.UploadListener() {
+            @Override
+            public void onSuccess(String urlPath) {
+                Log.d("test", "success: The path is " + urlPath);
+            }
+
+            @Override
+            public void onFailure(String errorMsg, Throwable throwable) {
+                Log.d("test", "failure: The error is " + throwable.getMessage());
+            }
+        });
+    }
+
+    public void download(String url, String localPath) {
+        DownHelper.get().download(url, localPath, new DownHelper.OnDownloadListener() {
+            @Override
+            public void onDownloadSuccess() {
+                Log.d("test", "success");
+            }
+
+            @Override
+            public void onDownloading(int progress) {
+                Log.d("test", "Progress: " + progress);
+            }
+
+            @Override
+            public void onDownloadFailed() {
+                Log.d("test", "failure");
             }
         });
     }

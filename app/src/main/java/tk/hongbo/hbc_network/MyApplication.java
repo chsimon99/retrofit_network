@@ -23,7 +23,7 @@ public class MyApplication extends Application {
                 map.put("ak", "bb50c67b3f7d9143b77272da961de3f9");
                 map.put("deviceId", "352936090691741");
                 map.put("appChannel", "10006");
-                map.put("ut", "34f33ad40660aa3ceedf901daff9a432");
+                map.put("ut", "1c3c3832fd30cc7c39851337d65d7202");
                 return map;
             }
 
@@ -34,6 +34,5 @@ public class MyApplication extends Application {
                 return map;
             }
         });
-        Net.getIns().setDebug(false);
     }
 }

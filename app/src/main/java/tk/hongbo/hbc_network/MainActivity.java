@@ -4,6 +4,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,5 +29,14 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getOfferLimit().observe(this, data -> {
             Log.d("test", data.getLastOfferLimitTip());
         });
+    }
+
+    public void upload(View view) {
+        viewModel.upload(getExternalFilesDir("test") + File.separator + "test.png");
+    }
+
+    public void download(View view) {
+        String localPath = getExternalFilesDir("testt") + File.separator + "ttt.png";
+        viewModel.download("https://www.baidu.com/img/bd_logo1.png", localPath);
     }
 }

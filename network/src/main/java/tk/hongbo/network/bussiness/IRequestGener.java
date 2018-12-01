@@ -22,5 +22,5 @@ public interface IRequestGener {
     Call<ResponseBody> post(@Url String url, @FieldMap Map<String, Object> map);
 
     @POST
-    Call<ResponseBody> body(@Url String url, @Body String requestBody);
+    Call<ResponseBody> body(@Url String url, @Body Object requestBody);
 }

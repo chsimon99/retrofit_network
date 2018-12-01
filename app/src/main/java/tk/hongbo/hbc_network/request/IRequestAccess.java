@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -32,4 +33,7 @@ public interface IRequestAccess {
     @GET("trade/v1.5/c/order/list/all")
     Call<ResponseBody> getOrderListAll1(@Query("searchType") int searchType, @Query("limit") int limit,
                                         @Query("offset") int offset);
+
+    @POST("ucenter/v1.0/c/preventionCheatInfoByThird")
+    Call<ResponseBody> getBody(@Body Object requestBody);
 }

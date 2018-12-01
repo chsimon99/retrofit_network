@@ -11,6 +11,8 @@ import java.io.File;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import tk.hongbo.hbc_network.entity.BodyEntity;
+import tk.hongbo.hbc_network.entity.BodyInfoEntity;
 import tk.hongbo.hbc_network.entity.LastOfferLimitVo;
 import tk.hongbo.hbc_network.request.IRequestAccess;
 import tk.hongbo.network.Net;
@@ -36,7 +38,8 @@ public class MainViewModel extends AndroidViewModel {
 //        getNetData();
 //        test1();
 //        test2();
-        test3();
+//        test3();
+        testBody();
         return liveData;
     }
 
@@ -80,6 +83,37 @@ public class MainViewModel extends AndroidViewModel {
                 Log.d("test", String.valueOf(o));
             }
         });
+    }
+
+    /**
+     * 测试body体请求
+     */
+    private void testBody() {
+//        String msg = "{\"data\":{\"captchaValid\":1,\"role\":\"USER\",\"userExist\":1,\"valid\":1,\"deviceId\":\"201810161120144d76d27d086ff9cb813d6c61151037300184ac8e3aef51cc\",\"eventName\":\"login\",\"ip\":\"192.168.131.193\",\"location\":{\"gpsLatitude\":39.8999,\"gpsLongitude\":116.468748},\"timestamp\":\"1543638885127\",\"tokenId\":\"120fba4428bc8167cc2552043612c978\"},\"eventId\":\"login\"}";
+        Call<ResponseBody> call = service.getBody(getTestData());
+        NetHelper.getIns().request(call, new NetListener() {
+            @Override
+            public void onSuccess(Object o) {
+                Log.d("test", String.valueOf(o));
+            }
+        });
+    }
+
+    private BodyEntity getTestData() {
+        BodyEntity be = new BodyEntity();
+        be.setEventId("login");
+        BodyInfoEntity bie = new BodyInfoEntity();
+        bie.setCaptchaValid(1);
+        bie.setRole("USER");
+        bie.setUserExist(1);
+        bie.setValid(1);
+        bie.setDeviceId("201810161120144d76d27d086ff9cb813d6c61151037300184ac8e3aef51cc");
+        bie.setEventName("login");
+        bie.setIp("192.168.131.193");
+        bie.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        bie.setTokenId("1e79f23d627507dfab8c6121592b0e82");
+        be.setData(bie);
+        return be;
     }
 
     public void upload(String filePath) {

@@ -34,11 +34,11 @@ public class NetHelper {
         request(url, method, questMap, "", listener);
     }
 
-    public void requestBody(String url, RequestType method, String body, NetListener<String> listener) {
+    public void requestBody(String url, RequestType method, Object body, NetListener<String> listener) {
         request(url, method, null, body, listener);
     }
 
-    public void request(String url, RequestType method, Map<String, Object> questMap, String body, NetListener<String> listener) {
+    public void request(String url, RequestType method, Map<String, Object> questMap, Object body, NetListener<String> listener) {
         if (TextUtils.isEmpty(url)) {
             return;
         }

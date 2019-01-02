@@ -18,12 +18,12 @@ public class MyApplication extends Application {
             public Map<String, String> getHeaders() {
                 Map<String, String> map = new HashMap<>();
                 map.put("Accept-Encoding", "identity");
-                map.put("appVersion", "7.3.0");
+                map.put("appVersion", "7.4.0");
                 map.put("idfa", "352936090691741");
                 map.put("ak", "bb50c67b3f7d9143b77272da961de3f9");
                 map.put("deviceId", "352936090691741");
                 map.put("appChannel", "examination");
-                map.put("ut", "38b60ba931b0729b54cad828ffad5f3f");
+                map.put("ut", "5fd52c099a549f71f973dea09b422c8d");
                 return map;
             }
 

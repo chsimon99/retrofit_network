@@ -94,7 +94,7 @@ public class UploadHelper {
                 @Override
                 public void onResponse(okhttp3.Call call, okhttp3.Response response) {
                     if (listener != null) {
-                        listener.onSuccess(ossTokenKeyBean.getPath());
+                        listener.onSuccess(ossTokenKeyBean.getPath(), ossTokenBean.getCdnHost());
                     }
                 }
             });
@@ -102,7 +102,7 @@ public class UploadHelper {
     }
 
     public interface UploadListener {
-        void onSuccess(String urlPath);
+        void onSuccess(String urlPath, String cdnHost);
 
         void onFailure(String errorMsg, Throwable throwable);
     }

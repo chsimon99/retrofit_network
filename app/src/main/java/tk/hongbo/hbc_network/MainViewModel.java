@@ -119,8 +119,8 @@ public class MainViewModel extends AndroidViewModel {
     public void upload(String filePath) {
         UploadHelper.get().upload(new File(filePath), new UploadHelper.UploadListener() {
             @Override
-            public void onSuccess(String urlPath) {
-                Log.d("test", "success: The path is " + urlPath);
+            public void onSuccess(String urlPath, String cdnHost) {
+                Log.d("test", "success: The path is " + urlPath + ",cdnHot:" + cdnHost);
             }
 
             @Override

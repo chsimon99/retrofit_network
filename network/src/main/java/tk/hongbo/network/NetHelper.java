@@ -1,6 +1,7 @@
 package tk.hongbo.network;
 
 import retrofit2.Call;
+import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.net.NetCallback;
 import tk.hongbo.network.net.NetListener;
 
@@ -23,30 +24,30 @@ public class NetHelper<R, M> {
         call.enqueue(new NetCallback<R, M>(new NetCallback.NetDataListener<M>() {
 
             @Override
-            public void onSuccess(M t) {
+            public void onSuccess(M t, NetRaw netRaw) {
                 if (listener != null) {
-                    listener.onSuccess(t);
+                    listener.onSuccess(t, netRaw);
                 }
             }
 
             @Override
-            public void onBusinessError(int status, String message) {
+            public void onBusinessError(int status, String message, NetRaw netRaw) {
                 if (listener != null) {
-                    listener.onFailure(status, message, null);
+                    listener.onFailure(status, message, null, netRaw);
                 }
             }
 
             @Override
-            public void onServiceError(int status) {
+            public void onServiceError(int status, NetRaw netRaw) {
                 if (listener != null) {
-                    listener.onFailure(status, "", new IllegalStateException("Server Exception"));
+                    listener.onFailure(status, "", new IllegalStateException("Server Exception"), netRaw);
                 }
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Throwable t, NetRaw netRaw) {
                 if (listener != null) {
-                    listener.onFailure(0, "", t);
+                    listener.onFailure(0, "", t, netRaw);
                 }
             }
         }));

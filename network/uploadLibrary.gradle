@@ -12,11 +12,11 @@ afterEvaluate { project ->
                     authentication(userName: properties.getProperty('maven.user'), password: properties.getProperty('maven.password'))
                 }
                 pom.project {
-                    version '1.0.2'
+                    version '1.0.3'
                     artifactId 'network'
                     groupId 'tk.hongbo.net'
                     packaging 'aar'
-                    description 'Add getKey back cdnHost'
+                    description '升级网络库，支持调用者获取网络请求信息，主要包括时间戳和头信息。'
                 }
             }
         }

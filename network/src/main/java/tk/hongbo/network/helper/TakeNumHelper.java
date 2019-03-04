@@ -12,6 +12,7 @@ import tk.hongbo.network.NetHelper;
 import tk.hongbo.network.bussiness.IRequestSend;
 import tk.hongbo.network.data.OssTokenBean;
 import tk.hongbo.network.data.OssTokenKeyBean;
+import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.net.NetListener;
 import tk.hongbo.network.utils.Log;
 
@@ -88,7 +89,7 @@ public class TakeNumHelper {
             IRequestSend service = Net.getIns().getRetrofit().create(IRequestSend.class);
             NetHelper.getIns().request(service.getOssToken(), new NetListener<OssTokenBean>() {
                 @Override
-                public void onSuccess(OssTokenBean ossTokenEntity) {
+                public void onSuccess(OssTokenBean ossTokenEntity, NetRaw netRaw) {
                     if (ossTokenEntity != null) {
                         getTime = System.currentTimeMillis();
                         ossTokenBean = ossTokenEntity;
@@ -99,7 +100,7 @@ public class TakeNumHelper {
                 }
 
                 @Override
-                public void onFailure(int status, String message, Throwable t) {
+                public void onFailure(int status, String message, Throwable t, NetRaw netRaw) {
                     if (!TextUtils.isEmpty(message)) {
                         keyBackListener.onFail(message);
                     }

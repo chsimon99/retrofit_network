@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tk.hongbo.network.data.NetRoot;
+import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.utils.ApiReportHelper;
 import tk.hongbo.network.utils.Log;
 
@@ -22,16 +23,22 @@ public class NetCallback<R, B> implements Callback<R> {
     public void onResponse(Call<R> call, Response<R> response) {
         try {
             ApiReportHelper.getInstance().addReport(response);
+            NetRaw netRaw = new NetRaw();
+            try {
+                netRaw = new NetRaw(response.raw().sentRequestAtMillis(), response.raw().receivedResponseAtMillis(),
+                        response.raw().request().headers().toMultimap(), response.raw().headers().toMultimap());
+            } catch (Exception ex) {
+            }
             if (response.isSuccessful()) {
                 if ((response.body() instanceof ResponseBody)) {
                     try {
                         String result = ((ResponseBody) response.body()).string();
                         if (listener != null) {
-                            listener.onSuccess(result);
+                            listener.onSuccess(result, netRaw);
                         }
                     } catch (IOException e) {
                         if (listener != null) {
-                            listener.onSuccess("");
+                            listener.onSuccess("", netRaw);
                         }
                         Log.e("Get result info failure", e);
                     }
@@ -43,7 +50,7 @@ public class NetCallback<R, B> implements Callback<R> {
                     } catch (IllegalAccessException e) {
                         Log.e("Does not support non-NetRoot format", e);
                         if (listener != null) {
-                            listener.onFailure(e);
+                            listener.onFailure(e, netRaw);
                         }
                     }
                     return;
@@ -51,16 +58,16 @@ public class NetCallback<R, B> implements Callback<R> {
                 NetRoot<B> netRoot = (NetRoot) response.body();
                 if (netRoot.getStatus() == 200) {
                     if (listener != null) {
-                        listener.onSuccess(netRoot.getData());
+                        listener.onSuccess(netRoot.getData(), netRaw);
                     }
                 } else {
                     if (listener != null) {
-                        listener.onBusinessError(netRoot.getStatus(), netRoot.getMessage());
+                        listener.onBusinessError(netRoot.getStatus(), netRoot.getMessage(), netRaw);
                     }
                 }
             } else {
                 if (listener != null) {
-                    listener.onServiceError(response.code());
+                    listener.onServiceError(response.code(), netRaw);
                 }
             }
         } catch (Exception e) {
@@ -72,17 +79,23 @@ public class NetCallback<R, B> implements Callback<R> {
     public void onFailure(Call<R> call, Throwable t) {
         Log.e("Net error", t);
         if (listener != null) {
-            listener.onFailure(t);
+            NetRaw netRaw = new NetRaw();
+            try {
+                netRaw = new NetRaw(Long.valueOf(call.request().header("ts")), System.currentTimeMillis(),
+                        call.request().headers().toMultimap(), null);
+            } catch (Exception e) {
+            }
+            listener.onFailure(t, netRaw);
         }
     }
 
     public interface NetDataListener<B> {
-        void onSuccess(B t);
+        void onSuccess(B t, NetRaw netRaw);
 
-        void onBusinessError(int status, String message);
+        void onBusinessError(int status, String message, NetRaw netRaw);
 
-        void onServiceError(int status);
+        void onServiceError(int status, NetRaw netRaw);
 
-        void onFailure(Throwable t);
+        void onFailure(Throwable t, NetRaw netRaw);
     }
 }

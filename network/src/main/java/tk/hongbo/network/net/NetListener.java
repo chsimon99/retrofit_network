@@ -12,11 +12,12 @@ import java.net.UnknownHostException;
 import javax.net.ssl.SSLHandshakeException;
 
 import tk.hongbo.network.Net;
+import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.utils.ToastUtils;
 
 public abstract class NetListener<M> implements NetRequestListener<M> {
     @Override
-    public void onFailure(int status, String message, Throwable t) {
+    public void onFailure(int status, String message, Throwable t, NetRaw netRaw) {
         if (TextUtils.isEmpty(message)) {
             onError(status, t);
         } else {

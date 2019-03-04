@@ -18,6 +18,7 @@ import tk.hongbo.hbc_network.request.IRequestAccess;
 import tk.hongbo.network.Net;
 import tk.hongbo.network.NetHelper;
 import tk.hongbo.network.data.NetRoot;
+import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.helper.DownHelper;
 import tk.hongbo.network.helper.UploadHelper;
 import tk.hongbo.network.net.NetListener;
@@ -46,7 +47,7 @@ public class MainViewModel extends AndroidViewModel {
     private void getNetData() {
         NetHelper.getIns().request(service.reportApp("114003750443", 1), new NetListener<String>() {
             @Override
-            public void onSuccess(String o) {
+            public void onSuccess(String o, NetRaw netRaw) {
                 Log.d("test", o);
             }
         });
@@ -63,13 +64,13 @@ public class MainViewModel extends AndroidViewModel {
         Call<NetRoot<LastOfferLimitVo>> call = service.changePwd("a123456", "z123456");
         NetHelper.getIns().request(call, new NetListener<LastOfferLimitVo>() {
             @Override
-            public void onSuccess(LastOfferLimitVo baseEntiry) {
+            public void onSuccess(LastOfferLimitVo baseEntiry, NetRaw netRaw) {
                 Log.d("test", baseEntiry.getLastOfferLimitTip());
             }
 
             @Override
-            public void onFailure(int status, String message, Throwable t) {
-                super.onFailure(status, message, t);
+            public void onFailure(int status, String message, Throwable t, NetRaw netRaw) {
+                super.onFailure(status, message, t, netRaw);
                 Log.d("test", "错误信息：" + message + ",错误状态码：" + status);
             }
         });
@@ -79,7 +80,7 @@ public class MainViewModel extends AndroidViewModel {
         Call<ResponseBody> call = service.getOrderListAll1(0, 20, 0);
         NetHelper.getIns().request(call, new NetListener() {
             @Override
-            public void onSuccess(Object o) {
+            public void onSuccess(Object o, NetRaw netRaw) {
                 Log.d("test", String.valueOf(o));
             }
         });
@@ -93,7 +94,7 @@ public class MainViewModel extends AndroidViewModel {
         Call<ResponseBody> call = service.getBody(getTestData());
         NetHelper.getIns().request(call, new NetListener() {
             @Override
-            public void onSuccess(Object o) {
+            public void onSuccess(Object o, NetRaw netRaw) {
                 Log.d("test", String.valueOf(o));
             }
         });

@@ -16,6 +16,7 @@ import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -256,11 +257,15 @@ public final class RetrofitTools {
         }
     }
 
+    public  <T> T executResponse(RetrofitRequest request, BaseSubscriber<Response<ResponseBody>> subscriber){
+        return (T)createRxResponse(request).compose(schedulersTransformer).subscribe(subscriber);
+    }
+
     public  <T> T execut(RetrofitRequest request, BaseSubscriber<T> subscriber){
         return (T)createRx(request).compose(schedulersTransformer).subscribe(subscriber);
     }
 
-    private Observable<ResponseBody> createRx(RetrofitRequest request) {
+    private Observable<Response<ResponseBody>> createRxResponse(RetrofitRequest request) {
         if (request.method().equals("GET")) {
             return apiService.executeGet(request.url(), request.params());
         }
@@ -276,6 +281,13 @@ public final class RetrofitTools {
             return apiService.executeDelete(request.url(), request.params());
         }
         return apiService.executeGet(request.url(), request.params());
+    }
+
+    private Observable<ResponseBody> createRx(RetrofitRequest request) {
+        if (request.method().equals("POST")) {
+            return apiService.post(request.url(), request.params());
+        }
+        return apiService.post(request.url(), request.params());
     }
 
     final Observable.Transformer schedulersTransformer = new Observable.Transformer() {

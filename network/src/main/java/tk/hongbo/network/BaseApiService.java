@@ -24,6 +24,7 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
@@ -45,16 +46,20 @@ import rx.Observable;
 public interface BaseApiService {
     @POST()
     @FormUrlEncoded
-    <T> Observable<ResponseBody> executePost(@Url() String url,@FieldMap Map<String, Object> maps);
+    <T> Observable<Response<ResponseBody>> executePost(@Url() String url, @FieldMap Map<String, Object> maps);
+
+    @POST()
+    @FormUrlEncoded
+    <T> Observable<ResponseBody> post(@Url() String url, @FieldMap Map<String, Object> maps);
 
     @GET()
-    <T> Observable<ResponseBody> executeGet(@Url String url,@QueryMap Map<String, Object> maps);
+    <T> Observable<Response<ResponseBody>> executeGet(@Url String url,@QueryMap Map<String, Object> maps);
 
     @DELETE()
-    <T> Observable<ResponseBody> executeDelete( @Url String url, @QueryMap Map<String, Object> maps);
+    <T> Observable<Response<ResponseBody>> executeDelete( @Url String url, @QueryMap Map<String, Object> maps);
 
     @PUT()
-    <T> Observable<ResponseBody> executePut(@Url String url,@FieldMap Map<String, Object> maps);
+    <T> Observable<Response<ResponseBody>> executePut(@Url String url,@FieldMap Map<String, Object> maps);
 
     @POST()
     Observable<ResponseBody> executePostBody(@Url String url, @Body Object object);

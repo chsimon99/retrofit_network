@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tk.hongbo.network.BaseSubscriber;
@@ -50,31 +51,31 @@ public class MainActivity extends AppCompatActivity {
                 .writeTimeout(15)
                 .baseUrl(baseUrl)
                 .addHeader(headers)
-                .addInterceptor(null)
-                .addNetworkInterceptor(null)
+//                .addInterceptor(null)
+//                .addNetworkInterceptor(null)
                 .connectionPool(new ConnectionPool(poolNum, keepAlive, TimeUnit.MINUTES))//默认5个线程池
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//默认不填就是RxJavaCallAdapterFactory
                 .addConverterFactory(GsonConverterFactory.create())//默认不填就是GsonConverterFactory
                 .addLog(true)//默认false
                 .build();
 
-        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
-            @Override
-            public void onSuccess(String s, NetRaw netRaw) {
-                Log.e("------------","------onSuccess----=="+s.toString());
-            }
-        });
+//        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
+//            @Override
+//            public void onSuccess(String s, NetRaw netRaw) {
+//                Log.e("------------","------onSuccess----=="+s.toString());
+//            }
+//        });
         RetrofitRequest request = new RetrofitRequest.Builder()
                 .headers(headers)
                 .post(param)//get请求用.get(param)
                 .url("ucenter/v1.0/c/user/information")
                 .build();
 
-        tools.execut(request, new BaseSubscriber<ResponseBody>(this) {
+        tools.execut(request, new BaseSubscriber<ResponseBody>() {
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
-                    Log.e("------------","-----next-----=="+new String(responseBody.bytes()));
+                    Log.e("------------","---execut--next-----=="+new String(responseBody.bytes()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -83,6 +84,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable e) {
                 Log.e("------------","----------=="+e.getMessage());
+            }
+        });
+        tools.executResponse(request, new BaseSubscriber<Response<ResponseBody>>() {
+            @Override
+            public void onNext(Response<ResponseBody> response) {
+                Log.e("------------","----executResponse---next-----=="+response.headers().toString());
+                Log.e("------------","----executResponse---next-----=="+response.code());
+                try {
+                    Log.e("------------","----executResponse---next-----=="+new String(response.body().bytes()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

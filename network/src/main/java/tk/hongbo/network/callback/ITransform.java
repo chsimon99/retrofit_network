@@ -1,5 +1,5 @@
 /*
- *    Copyright (C) 2016 Tamic
+ *    Copyright (C) 2017 Tamic
  *
  *    link :https://github.com/Tamicer/Novate
  *
@@ -15,39 +15,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package tk.hongbo.network;
+package tk.hongbo.network.callback;
 
-import android.content.Context;
-
-import rx.Subscriber;
 
 /**
- * BaseSubscriber
+ *IGenericsConvert
+ * Created by imxu on 2019-04-01.
  */
-public abstract class BaseSubscriber<T> extends Subscriber<T> {
-
-    protected Context context;
-
-    public BaseSubscriber(Context context) {
-        this.context = context;
-    }
-
-    public BaseSubscriber() {
-    }
-
-    @Override
-    public void onError(Throwable e) {
-
-        onCompleted();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onCompleted() {
-
-    }
+public interface ITransform<E> {
+    <T> T transform(E response, Class<T> classOfT) throws Exception;
 }

@@ -20,6 +20,40 @@ public class NetHelper<R, M> {
         return netRequest;
     }
 
+    public void request(Call<R> call, String url,NetListener<M> listener) {
+        call.enqueue(new NetCallback<R, M>(new NetCallback.NetDataListener<M>() {
+
+            @Override
+            public void onSuccess(M t, NetRaw netRaw) {
+                if (listener != null) {
+                    listener.onSuccess(t, netRaw);
+                }
+            }
+
+            @Override
+            public void onBusinessError(int status, String message, NetRaw netRaw) {
+                if (listener != null) {
+                    listener.onFailure(status, message, null, netRaw);
+                }
+            }
+
+            @Override
+            public void onServiceError(int status, NetRaw netRaw) {
+                if (listener != null) {
+                    listener.onFailure(status, "", new IllegalStateException("Server Exception"), netRaw);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t, NetRaw netRaw) {
+                if (listener != null) {
+                    listener.onFailure(0, "", t, netRaw);
+                }
+            }
+        }));
+        CallApiManager.get().add(url,call);
+    }
+
     public void request(Call<R> call, NetListener<M> listener) {
         call.enqueue(new NetCallback<R, M>(new NetCallback.NetDataListener<M>() {
 

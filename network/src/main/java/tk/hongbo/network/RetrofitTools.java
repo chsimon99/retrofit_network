@@ -2,8 +2,10 @@ package tk.hongbo.network;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.TextUtils;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -24,8 +27,12 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import tk.hongbo.network.bussiness.IRequestGener;
+import tk.hongbo.network.callback.ResponseCallback;
+import tk.hongbo.network.data.OssTokenBean;
+import tk.hongbo.network.data.OssTokenKeyBean;
 import tk.hongbo.network.net.NetListener;
 import tk.hongbo.network.request.RetrofitRequest;
+import tk.hongbo.network.request.RetrofitRequestBody;
 import tk.hongbo.network.utils.Utils;
 
 public final class RetrofitTools {
@@ -257,11 +264,11 @@ public final class RetrofitTools {
         }
     }
 
-    public  <T> T executResponse(RetrofitRequest request, BaseSubscriber<Response<ResponseBody>> subscriber){
+    public <T> T executResponse(RetrofitRequest request, BaseSubscriber<Response<ResponseBody>> subscriber){
         return (T)createRxResponse(request).compose(schedulersTransformer).subscribe(subscriber);
     }
 
-    public  <T> T execut(RetrofitRequest request, BaseSubscriber<T> subscriber){
+    public <T> T execut(RetrofitRequest request, BaseSubscriber<T> subscriber){
         return (T)createRx(request).compose(schedulersTransformer).subscribe(subscriber);
     }
 
@@ -300,6 +307,68 @@ public final class RetrofitTools {
         }
     };
 
+    public <T> T rxUpload(String url, ContentType type, File file, ResponseCallback<T, ResponseBody> callBack){
+        return rxUpload(url,url,type,file,callBack);
+    }
+
+    private <T> T rxUpload(Object tag, String url, ContentType type, File file, ResponseCallback<T, ResponseBody> callBack) {
+        if (!file.exists()) {
+            throw new Resources.NotFoundException(file.getPath() + "file 路径无法找到");
+        }
+        if (callBack == null) {
+            callBack = ResponseCallback.CALLBACK_DEFAULT;
+        }
+        RetrofitRequestBody requestBody = Utils.createRequestBody(file, type, callBack);
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData(Utils.typeToStringName(type), file.getName(), requestBody);
+
+        return rxUpload(tag, url, body, callBack);
+    }
+
+    public <T> T rxUploadForAli(ContentType type, File file,OssTokenBean ossTokenBean, OssTokenKeyBean ossTokenKeyBean, ResponseCallback<T, ResponseBody> callBack) {
+        if (!file.exists()) {
+            throw new Resources.NotFoundException(file.getPath() + "file 路径无法找到");
+        }
+        if (callBack == null) {
+            callBack = ResponseCallback.CALLBACK_DEFAULT;
+        }
+        RetrofitRequestBody requestBody = Utils.createRequestBody(file, type, callBack);
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("OSSAccessKeyId", ossTokenBean.getOssTokenParamBean().getOssAccessKeyId())
+                        .createFormData("policy", ossTokenBean.getOssTokenParamBean().getPolicy())
+                        .createFormData("Signature", ossTokenBean.getOssTokenParamBean().getSignature())
+                        .createFormData("key", ossTokenKeyBean.getKey())
+                        .createFormData("file", file.getName(), requestBody);
+        return rxUpload(ossTokenBean.getAddress(), ossTokenBean.getAddress(), body, callBack);
+    }
+
+    /**
+     * Novate rxUpload by post With Part
+     * @param tag         request tag
+     * @param url         path or url
+     * @param requestBody requestBody
+     * @param callBack    ResponseCallback
+     * @param <T>         T return parsed data
+     * @return Subscription
+     */
+    private <T> T rxUpload(Object tag, String url, MultipartBody.Part requestBody, ResponseCallback<T, ResponseBody> callBack) {
+        return (T) apiService.uploadFlieWithPart(url, requestBody)
+                .compose(schedulersTransformer)
+                .subscribe(new RxSubscriber<T, ResponseBody>(tag, callBack).addContext(mContext));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void request(String url, RequestType method, Map<String, Object> questMap, NetListener<String> listener) {
         request(url, method, questMap, "", listener);
     }
@@ -315,11 +384,11 @@ public final class RetrofitTools {
             questMap = new HashMap<>();
         }
         if (method == RequestType.GET) {
-            tk.hongbo.network.NetHelper.getIns().request(apiManager.get(url, questMap), listener);
+            tk.hongbo.network.NetHelper.getIns().request(apiManager.get(url, questMap), url,listener);
         } else if (method == RequestType.POST) {
-            tk.hongbo.network.NetHelper.getIns().request(apiManager.post(url, questMap), listener);
+            tk.hongbo.network.NetHelper.getIns().request(apiManager.post(url, questMap), url,listener);
         } else if (method == RequestType.BODY) {
-            tk.hongbo.network.NetHelper.getIns().request(apiManager.body(url, body), listener);
+            tk.hongbo.network.NetHelper.getIns().request(apiManager.body(url, body), url,listener);
         }
     }
     public enum RequestType {

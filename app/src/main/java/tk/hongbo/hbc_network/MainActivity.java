@@ -17,7 +17,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscription;
 import tk.hongbo.network.BaseSubscriber;
+import tk.hongbo.network.CallApiManager;
 import tk.hongbo.network.RetrofitTools;
 import tk.hongbo.network.data.NetRaw;
 import tk.hongbo.network.helper.NetHelper;
@@ -59,23 +61,42 @@ public class MainActivity extends AppCompatActivity {
                 .addLog(true)//默认false
                 .build();
 
-//        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
-//            @Override
-//            public void onSuccess(String s, NetRaw netRaw) {
-//                Log.e("------------","------onSuccess----=="+s.toString());
-//            }
-//        });
+        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
+            @Override
+            public void onSuccess(String s, NetRaw netRaw) {
+                Log.e("------------","------onSuccess----=="+s.toString());
+            }
+        });
+        CallApiManager.get().cancel("ucenter/v1.0/c/user/information");
         RetrofitRequest request = new RetrofitRequest.Builder()
                 .headers(headers)
                 .post(param)//get请求用.get(param)
                 .url("ucenter/v1.0/c/user/information")
                 .build();
 
-        tools.execut(request, new BaseSubscriber<ResponseBody>() {
+//        tools.execut(request, new BaseSubscriber<ResponseBody>() {
+//            @Override
+//            public void onNext(ResponseBody responseBody) {
+//                try {
+//                    Log.e("------------","---execut--next-----=="+new String(responseBody.bytes()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                Log.e("------------","----------=="+e.getMessage());
+//            }
+//        });
+        Subscription subscription = tools.executResponse(request, new BaseSubscriber<Response<ResponseBody>>() {
             @Override
-            public void onNext(ResponseBody responseBody) {
+            public void onNext(Response<ResponseBody> response) {
+                Log.e("------------","----executResponse---next-----=="+response.headers().toString());
+                Log.e("------------","----executResponse---next-----=="+response.code());
+                Log.e("------------","----executResponse---next-----=="+response.raw().request().url());
                 try {
-                    Log.e("------------","---execut--next-----=="+new String(responseBody.bytes()));
+                    Log.e("------------","----executResponse---next-----=="+response.body().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -83,21 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("------------","----------=="+e.getMessage());
+                Log.e("------------","----executResponse---Throwable-----=="+e.getMessage());
+                super.onError(e);
             }
+
         });
-        tools.executResponse(request, new BaseSubscriber<Response<ResponseBody>>() {
-            @Override
-            public void onNext(Response<ResponseBody> response) {
-                Log.e("------------","----executResponse---next-----=="+response.headers().toString());
-                Log.e("------------","----executResponse---next-----=="+response.code());
-                try {
-                    Log.e("------------","----executResponse---next-----=="+new String(response.body().bytes()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        subscription.unsubscribe();//取消网络请求
     }
 
     @Override

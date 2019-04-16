@@ -58,6 +58,10 @@ public final class RetrofitTools {
         this.apiService = apiService;
     }
 
+    public static Context getmContext() {
+        return mContext;
+    }
+
     public static final class Builder{
         private int readTimeout = DEFAULT_TIMEOUT;
         private int writeTimeout = DEFAULT_TIMEOUT;
@@ -274,7 +278,7 @@ public final class RetrofitTools {
 
     private Observable<Response<ResponseBody>> createRxResponse(RetrofitRequest request) {
         if (request.method().equals("GET")) {
-            return apiService.executeGet(request.url(), request.params());
+            return apiService.executeGet(request.url());
         }
         if (request.method().equals("POST")) {
             return apiService.executePost(request.url(), request.params());
@@ -287,12 +291,15 @@ public final class RetrofitTools {
         if (request.method().equals("DELETE")) {
             return apiService.executeDelete(request.url(), request.params());
         }
-        return apiService.executeGet(request.url(), request.params());
+        return apiService.executePost(request.url(), request.params());
     }
 
     private Observable<ResponseBody> createRx(RetrofitRequest request) {
         if (request.method().equals("POST")) {
             return apiService.post(request.url(), request.params());
+        }
+        if (request.method().equals("GET")) {
+            return apiService.get(request.url());
         }
         return apiService.post(request.url(), request.params());
     }
@@ -304,6 +311,20 @@ public final class RetrofitTools {
             return ((Observable) observable).subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
+        }
+    };
+
+    /**
+     * RXJAVA schedulersTransformer
+     * Schedulers.io()
+     */
+    final Observable.Transformer schedulersTransformerDown = new Observable.Transformer() {
+        @Override
+        public Object call(Object observable) {
+            return ((Observable) observable).subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.newThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io());
         }
     };
 
@@ -357,7 +378,33 @@ public final class RetrofitTools {
                 .subscribe(new RxSubscriber<T, ResponseBody>(tag, callBack).addContext(mContext));
     }
 
+    private Observable<ResponseBody> downObservable;
+    private Map<Object, Observable<ResponseBody>> downMaps = new HashMap<Object, Observable<ResponseBody>>(){};
+    /**
+     * Rx Download file
+     *
+     * @param callBack
+     */
+    public <T> T rxDownload(String url, final ResponseCallback callBack) {
+        return rxDownload(url, url, callBack);
+    }
 
+    /**
+     * Rx Download file
+     *
+     * @param tag      request Tag
+     * @param callBack
+     */
+    public <T> T rxDownload(Object tag, String url, final ResponseCallback callBack) {
+        if (downMaps.get(tag) == null) {
+            downObservable = apiService.downloadFile(url);
+        } else {
+            downObservable = downMaps.get(tag);
+        }
+        downMaps.put(tag, downObservable);
+        return (T) downObservable.compose(schedulersTransformerDown)
+                .subscribe(new RxSubscriber<T, ResponseBody>(tag, callBack));
+    }
 
 
 

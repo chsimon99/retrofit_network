@@ -53,7 +53,10 @@ public interface BaseApiService {
     <T> Observable<ResponseBody> post(@Url() String url, @FieldMap Map<String, Object> maps);
 
     @GET()
-    <T> Observable<Response<ResponseBody>> executeGet(@Url String url,@QueryMap Map<String, Object> maps);
+    <T> Observable<Response<ResponseBody>> executeGet(@Url String url);
+
+    @GET()
+    <T> Observable<ResponseBody> get(@Url String url);
 
     @DELETE()
     <T> Observable<Response<ResponseBody>> executeDelete( @Url String url, @QueryMap Map<String, Object> maps);

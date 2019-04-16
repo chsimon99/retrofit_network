@@ -99,7 +99,7 @@ public final class RetrofitRequest {
             return url(parsed);
         }
 
-        public RetrofitRequest.Builder header(String name, String value) {
+        public RetrofitRequest.Builder setHeader(String name, String value) {
             headers.set(name, value);
             return this;
         }
@@ -114,7 +114,7 @@ public final class RetrofitRequest {
             return this;
         }
 
-        public RetrofitRequest.Builder headers(Map<String, String> headers) {
+        public RetrofitRequest.Builder addHeaders(Map<String, String> headers) {
             if (headers != null && headers.size() > 0) {
                 Set<String> keys = headers.keySet();
                 for (String headerKey : keys) {
@@ -124,8 +124,8 @@ public final class RetrofitRequest {
             return this;
         }
 
-        public RetrofitRequest.Builder get(Map<String, Object> body) {
-            return method("GET", body);
+        public RetrofitRequest.Builder get() {
+            return method("GET", null);
         }
 
         public RetrofitRequest.Builder head() {

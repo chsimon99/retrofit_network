@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import com.hjq.permissions.OnPermission;
+import com.hjq.permissions.XXPermissions;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -19,19 +24,18 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Subscription;
 import tk.hongbo.network.BaseSubscriber;
-import tk.hongbo.network.CallApiManager;
 import tk.hongbo.network.RetrofitTools;
-import tk.hongbo.network.data.NetRaw;
-import tk.hongbo.network.helper.NetHelper;
-import tk.hongbo.network.net.NetListener;
+import tk.hongbo.network.callback.RxFileCallBack;
 import tk.hongbo.network.request.RetrofitRequest;
+import tk.hongbo.network.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
-    String baseUrl = "https://api5.huangbaoche.com/";
+    String baseUrl = "https://api5-test.huangbaoche.com/";
     int poolNum = 5;
     int keepAlive = 5;
+    private RetrofitTools mTools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +49,30 @@ public class MainActivity extends AppCompatActivity {
         headers.put("Accept", "application/json");
 
         Map<String, Object> param = new HashMap<>();
-        headers.put("Accept", "application/json");
+        param.put("areaCode","86");
+        param.put("mobile","18210101010");
+        param.put("password","a000000");
 
 
-        RetrofitTools tools = new RetrofitTools.Builder(this)
+        headers.put("ak", "94b44ff84e6c81ca6a4f5452f6ab7a6e");
+        headers.put("ut", "76b8866eede9f9765963200baceadb25");
+        headers.put("ver", "5.1.0");
+        headers.put("ts", String.valueOf(System.currentTimeMillis()));
+        headers.put("idfa", "866697029636913");
+        headers.put("os", "1");
+        headers.put("lc", "ch");
+        headers.put("source", "g");
+        headers.put("appChannel", "adnroid");
+        headers.put("osVersion", "6.0");
+
+
+        //                .addInterceptor(null)
+        //                .addNetworkInterceptor(null)
+        //默认5个线程池
+        //默认不填就是RxJavaCallAdapterFactory
+        //默认不填就是GsonConverterFactory
+        //默认false
+        mTools = new RetrofitTools.Builder(this)
                 .connectTimeout(30)
                 .writeTimeout(15)
                 .baseUrl(baseUrl)
@@ -58,27 +82,29 @@ public class MainActivity extends AppCompatActivity {
                 .connectionPool(new ConnectionPool(poolNum, keepAlive, TimeUnit.MINUTES))//默认5个线程池
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//默认不填就是RxJavaCallAdapterFactory
                 .addConverterFactory(GsonConverterFactory.create())//默认不填就是GsonConverterFactory
-                .addLog(true)//默认false
+                .addLog(false)//默认false
                 .build();
 
-        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
-            @Override
-            public void onSuccess(String s, NetRaw netRaw) {
-                Log.e("------------","------onSuccess----=="+s.toString());
-            }
-        });
-        CallApiManager.get().cancel("ucenter/v1.0/c/user/information");
+//        tools.request("ucenter/v1.0/c/user/information", RetrofitTools.RequestType.POST, null, new NetListener<String>() {
+//            @Override
+//            public void onSuccess(String s, NetRaw netRaw) {
+//                Log.e("------------","------onSuccess----=="+s.toString());
+//            }
+//        });
+//        CallApiManager.get().cancel("ucenter/v1.0/c/user/information");
         RetrofitRequest request = new RetrofitRequest.Builder()
-                .headers(headers)
-                .post(param)//get请求用.get(param)
-                .url("ucenter/v1.0/c/user/information")
+                .addHeaders(headers)
+                .get()
+                .url("fund/v1.3/g/account/balances")
+//                .post(param)//get请求用.get()
+//                .url("supplier/v1.2/g/guides/register/checkPassword")
                 .build();
 
 //        tools.execut(request, new BaseSubscriber<ResponseBody>() {
 //            @Override
 //            public void onNext(ResponseBody responseBody) {
 //                try {
-//                    Log.e("------------","---execut--next-----=="+new String(responseBody.bytes()));
+//                    Log.e("------------","---execut--next-----=="+responseBody.string());
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
@@ -89,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.e("------------","----------=="+e.getMessage());
 //            }
 //        });
-        Subscription subscription = tools.executResponse(request, new BaseSubscriber<Response<ResponseBody>>() {
+        Subscription subscription = mTools.executResponse(request, new BaseSubscriber<Response<ResponseBody>>() {
             @Override
             public void onNext(Response<ResponseBody> response) {
                 Log.e("------------","----executResponse---next-----=="+response.headers().toString());
@@ -130,7 +156,43 @@ public class MainActivity extends AppCompatActivity {
 
     public void download(View view) {
         String localPath = getExternalFilesDir("testt") + File.separator + "ttt.png";
-        viewModel.download("https://www.baidu.com/img/bd_logo1.png", localPath);
+//        viewModel.download("https://www.baidu.com/img/bd_logo1.png", localPath);
+
+        String downUrl = "http://wap.dl.pinyin.sogou.com/wapdl/hole/201512/03/SogouInput_android_v7.11_sweb.apk";
+
+        XXPermissions.with(this).permission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                .request(new OnPermission() {
+                    @Override
+                    public void hasPermission(List<String> granted, boolean isAll) {
+                        mTools.rxDownload(downUrl, new RxFileCallBack(Utils.getBasePath(MainActivity.this),"retrofittest.apk") {
+                            @Override
+                            public void onNext(Object tag, File file) {
+                                Toast.makeText(MainActivity.this, "下载成功!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onProgress(Object tag, float progress, long downloaded, long total) {
+                                Log.i("----------","-----onProgress----=="+progress);
+                            }
+
+                            @Override
+                            public void onError(Object tag, Exception e) {
+
+                            }
+
+                            @Override
+                            public void onCancel(Object tag, Exception e) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void noPermission(List<String> denied, boolean quick) {
+
+                    }
+                });
+
     }
 
     /**

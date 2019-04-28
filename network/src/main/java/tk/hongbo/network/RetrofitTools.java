@@ -24,6 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import tk.hongbo.network.bussiness.IRequestGener;
@@ -266,6 +267,11 @@ public final class RetrofitTools {
             }
             return this;
         }
+    }
+
+
+    public <T> T json(String url, String jsonStr, BaseSubscriber<Response<ResponseBody>> subscriber){
+        return (T)apiService.postRequestBody(url,Utils.createJson(jsonStr)).compose(schedulersTransformer).subscribe(subscriber);
     }
 
     public <T> T executResponse(RetrofitRequest request, BaseSubscriber<Response<ResponseBody>> subscriber){

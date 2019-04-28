@@ -50,6 +50,11 @@ public class Utils {
         return Thread.currentThread() == Looper.getMainLooper().getThread();
     }
 
+    public static RequestBody createJson(String jsonString) {
+        checkNotNull(jsonString, "json not null!");
+        return RequestBody.create(okhttp3.MediaType.parse(MULTIPART_JSON_DATA), jsonString);
+    }
+
     /**
      * createRequestBody
      * @param file file

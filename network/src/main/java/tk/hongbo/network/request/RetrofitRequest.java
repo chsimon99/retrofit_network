@@ -1,6 +1,7 @@
 package tk.hongbo.network.request;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +59,7 @@ public final class RetrofitRequest {
         public Builder() {
             this.method = "GET";
             this.headers = new Headers.Builder();
+            this.params = new HashMap<>();
         }
 
         public RetrofitRequest.Builder url(HttpUrl url) {
@@ -101,16 +103,19 @@ public final class RetrofitRequest {
 
         public RetrofitRequest.Builder setHeader(String name, String value) {
             headers.set(name, value);
+            params.put(name,value);
             return this;
         }
 
         public RetrofitRequest.Builder addHeader(String name, String value) {
             headers.add(name, value);
+            params.put(name,value);
             return this;
         }
 
         public RetrofitRequest.Builder removeHeader(String name) {
             headers.removeAll(name);
+            params.remove(name);
             return this;
         }
 
@@ -119,6 +124,7 @@ public final class RetrofitRequest {
                 Set<String> keys = headers.keySet();
                 for (String headerKey : keys) {
                     this.headers.add(headerKey, headers.get(headerKey) == null ? "" : headers.get(headerKey));
+                    this.params.put(headerKey, headers.get(headerKey) == null ? "" : headers.get(headerKey));
                 }
             }
             return this;
@@ -154,7 +160,9 @@ public final class RetrofitRequest {
                 throw new IllegalArgumentException("method " + method + " must have a request body.");
             }
             this.method = method;
-            this.params = body;
+            if(body!= null){
+                this.params = body;
+            }
             return this;
         }
 

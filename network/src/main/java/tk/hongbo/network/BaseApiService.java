@@ -53,10 +53,10 @@ public interface BaseApiService {
     <T> Observable<ResponseBody> post(@Url() String url, @FieldMap Map<String, Object> maps);
 
     @GET()
-    <T> Observable<Response<ResponseBody>> executeGet(@Url String url);
+    <T> Observable<Response<ResponseBody>> executeGet(@Url String url, @QueryMap Map<String, Object> map);
 
     @GET()
-    <T> Observable<ResponseBody> get(@Url String url);
+    <T> Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, Object> map);
 
     @DELETE()
     <T> Observable<Response<ResponseBody>> executeDelete( @Url String url, @QueryMap Map<String, Object> maps);
@@ -113,7 +113,7 @@ public interface BaseApiService {
     <T> Observable<ResponseBody> postForm(@Url() String url,@FieldMap Map<String, Object> maps);
 
     @POST()
-    Observable<ResponseBody> postRequestBody(@Url() String url,@Body RequestBody Body);
+    Observable<Response<ResponseBody>> postRequestBody(@Url() String url,@Body RequestBody Body);
 }
 
 

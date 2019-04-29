@@ -284,7 +284,7 @@ public final class RetrofitTools {
 
     private Observable<Response<ResponseBody>> createRxResponse(RetrofitRequest request) {
         if (request.method().equals("GET")) {
-            return apiService.executeGet(request.url());
+            return apiService.executeGet(request.url(),request.params());
         }
         if (request.method().equals("POST")) {
             return apiService.executePost(request.url(), request.params());
@@ -305,7 +305,7 @@ public final class RetrofitTools {
             return apiService.post(request.url(), request.params());
         }
         if (request.method().equals("GET")) {
-            return apiService.get(request.url());
+            return apiService.get(request.url(),request.params());
         }
         return apiService.post(request.url(), request.params());
     }

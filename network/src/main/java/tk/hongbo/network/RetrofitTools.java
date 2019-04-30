@@ -352,21 +352,29 @@ public final class RetrofitTools {
         return rxUpload(tag, url, body, callBack);
     }
 
-    public <T> T rxUploadForAli(ContentType type, File file,OssTokenBean ossTokenBean, OssTokenKeyBean ossTokenKeyBean, ResponseCallback<T, ResponseBody> callBack) {
-        if (!file.exists()) {
-            throw new Resources.NotFoundException(file.getPath() + "file 路径无法找到");
-        }
+//    public <T> T rxUploadForAli(ContentType type, File file,OssTokenBean ossTokenBean, OssTokenKeyBean ossTokenKeyBean, ResponseCallback<T, ResponseBody> callBack) {
+//        if (!file.exists()) {
+//            throw new Resources.NotFoundException(file.getPath() + "file 路径无法找到");
+//        }
+//        if (callBack == null) {
+//            callBack = ResponseCallback.CALLBACK_DEFAULT;
+//        }
+//        RetrofitRequestBody requestBody = Utils.createRequestBody(file, type, callBack);
+//        MultipartBody.Part body =
+//                MultipartBody.Part.createFormData("OSSAccessKeyId", ossTokenBean.getOssTokenParamBean().getOssAccessKeyId())
+//                        .createFormData("policy", ossTokenBean.getOssTokenParamBean().getPolicy())
+//                        .createFormData("Signature", ossTokenBean.getOssTokenParamBean().getSignature())
+//                        .createFormData("key", ossTokenKeyBean.getKey())
+//                        .createFormData("file", file.getName(), requestBody);
+//        return rxUpload(ossTokenBean.getAddress(), ossTokenBean.getAddress(), body, callBack);
+//    }
+
+    public <T> T rxUploadForAli(String url,MultipartBody.Part body,ResponseCallback<T, ResponseBody> callBack){
         if (callBack == null) {
             callBack = ResponseCallback.CALLBACK_DEFAULT;
         }
-        RetrofitRequestBody requestBody = Utils.createRequestBody(file, type, callBack);
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("OSSAccessKeyId", ossTokenBean.getOssTokenParamBean().getOssAccessKeyId())
-                        .createFormData("policy", ossTokenBean.getOssTokenParamBean().getPolicy())
-                        .createFormData("Signature", ossTokenBean.getOssTokenParamBean().getSignature())
-                        .createFormData("key", ossTokenKeyBean.getKey())
-                        .createFormData("file", file.getName(), requestBody);
-        return rxUpload(ossTokenBean.getAddress(), ossTokenBean.getAddress(), body, callBack);
+
+        return rxUpload(url, url, body, callBack);
     }
 
     /**

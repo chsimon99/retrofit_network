@@ -119,6 +119,16 @@ public final class RetrofitRequest {
             return this;
         }
 
+        public RetrofitRequest.Builder addParams(Map<String, String> headers) {
+            if (headers != null && headers.size() > 0) {
+                Set<String> keys = headers.keySet();
+                for (String headerKey : keys) {
+                    this.params.put(headerKey, headers.get(headerKey) == null ? "" : headers.get(headerKey));
+                }
+            }
+            return this;
+        }
+
         public RetrofitRequest.Builder addHeaders(Map<String, String> headers) {
             if (headers != null && headers.size() > 0) {
                 Set<String> keys = headers.keySet();

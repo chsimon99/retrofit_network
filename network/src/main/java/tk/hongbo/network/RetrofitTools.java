@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -217,9 +218,6 @@ public final class RetrofitTools {
 
             if (isLog) {
                 okhttpBuilder.addNetworkInterceptor(
-                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS));
-
-                okhttpBuilder.addNetworkInterceptor(
                         new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
             }
 
@@ -253,10 +251,11 @@ public final class RetrofitTools {
         }
 
         public Builder connectTimeout(int timeout, TimeUnit unit) {
-            this.readTimeout = Utils.checkDuration("timeout", timeout, unit);
+//            this.readTimeout = Utils.checkDuration("timeout", timeout, unit);
+            this.readTimeout = timeout;
             if (timeout >= 0) {
-                this.readTimeout = timeout;
                 okhttpBuilder.connectTimeout(readTimeout, unit);
+                okhttpBuilder.readTimeout(readTimeout, unit);
             }
             return this;
         }
@@ -420,7 +419,20 @@ public final class RetrofitTools {
                 .subscribe(new RxSubscriber<T, ResponseBody>(tag, callBack));
     }
 
-
+    public String getExecute(String url,Map<String, Object> map){
+        try {
+            Response<ResponseBody> response = apiService.getCall(url, map).execute();
+            if (response.isSuccessful()){
+                if ((response.body() instanceof ResponseBody)) {
+                    String result = response.body().string();
+                    return result;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
 

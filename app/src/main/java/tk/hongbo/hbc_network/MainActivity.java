@@ -210,5 +210,14 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         resquestByOkhttp();
+
+        for(int i =0 ;i<3;i++){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    resquestByOkhttp();
+                }
+            }).start();
+        }
     }
 }

@@ -119,7 +119,7 @@ public final class RetrofitRequest {
             return this;
         }
 
-        public RetrofitRequest.Builder addParams(Map<String, String> headers) {
+        public RetrofitRequest.Builder addParams(Map<String, Object> headers) {
             if (headers != null && headers.size() > 0) {
                 Set<String> keys = headers.keySet();
                 for (String headerKey : keys) {
@@ -129,6 +129,7 @@ public final class RetrofitRequest {
             return this;
         }
 
+        @Deprecated
         public RetrofitRequest.Builder addHeaders(Map<String, String> headers) {
             if (headers != null && headers.size() > 0) {
                 Set<String> keys = headers.keySet();

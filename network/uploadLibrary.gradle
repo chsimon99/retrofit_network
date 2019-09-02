@@ -12,11 +12,11 @@ afterEvaluate { project ->
                     authentication(userName: properties.getProperty('maven.user'), password: properties.getProperty('maven.password'))
                 }
                 pom.project {
-                    version '1.0.14'
+                    version '1.1.0'
                     artifactId 'network'
                     groupId 'com.cclx.mobile.network'
                     packaging 'aar'
-                    description '修改post的header请求头'
+                    description '下载出错时onError放入主线程'
                 }
             }
         }

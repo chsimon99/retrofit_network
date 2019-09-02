@@ -159,7 +159,12 @@ public abstract class ResponseCallback<T, E>  implements Callback, ITransform<E>
                 onHandleResponse(response.body());
             } catch (Exception e) {
                 e.printStackTrace();
-                onError(tag, e);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onError(tag, e);
+                    }
+                });
             }
         }
     }

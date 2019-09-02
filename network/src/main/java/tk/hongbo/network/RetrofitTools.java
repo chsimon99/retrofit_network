@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -79,6 +80,8 @@ public final class RetrofitTools {
         private ConnectionPool connectionPool;
         private Converter.Factory converterFactory;
         private CallAdapter.Factory callAdapterFactory;
+        private int maxRequest = 0;
+        private int maxRequestsPerHost = 0;
         //        private Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR;
         //        private Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR_OFFLINE;
 
@@ -150,6 +153,30 @@ public final class RetrofitTools {
          */
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = Utils.checkNotNull(baseUrl, "baseUrl == null");
+            return this;
+        }
+
+        /**
+         * 设置最大请求数
+         * @param max
+         * @return
+         */
+        public Builder setMaxRequest(int max){
+            if(max > 0){
+                maxRequest = max;
+            }
+            return this;
+        }
+
+        /**
+         * 设置最大PerHost
+         * @param max
+         * @return
+         */
+        public Builder setMaxRequestsPerHost(int max){
+            if(max > 0){
+                maxRequestsPerHost = max;
+            }
             return this;
         }
 
@@ -225,6 +252,13 @@ public final class RetrofitTools {
                 connectionPool = new ConnectionPool(default_maxidle_connections, default_keep_aliveduration, TimeUnit.SECONDS);
             }
             okhttpBuilder.connectionPool(connectionPool);
+
+            if(maxRequest > 0 && maxRequestsPerHost > 0){
+                Dispatcher dispatcher = new Dispatcher();
+                dispatcher.setMaxRequests(maxRequest);
+                dispatcher.setMaxRequestsPerHost(maxRequestsPerHost);
+                okhttpBuilder.dispatcher(dispatcher);
+            }
 
             /**
              * create okHttpClient
